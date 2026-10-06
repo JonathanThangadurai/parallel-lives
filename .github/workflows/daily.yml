@@ -1,0 +1,33 @@
+name: Daily comparison
+
+on:
+  schedule:
+    # 16:17 UTC - safely after EnergyZero's ~15:00 CET day-ahead publish and long
+    # after CAISO's DAM publish, so both sources have a settled "yesterday" to read.
+    - cron: "17 16 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run comparison
+        run: python -m parallel_lives.run
+        env:
+          PYTHONPATH: src
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/history.jsonl data/latest.json
+          git diff --cached --quiet || git commit -m "Daily comparison: $(date -u +%Y-%m-%d)"
+          git push

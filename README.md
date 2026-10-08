@@ -14,6 +14,8 @@ two markets' normalized daily price shape, despite nothing connecting them. Both
 the solar-driven "duck curve" - cheap at midday, expensive in the early evening. See
 the published write-up: *The Duck Curve, Twice*.
 
+![CAISO and EnergyZero's normalized daily price shape, 14 days of real data, r = 0.79](docs/images/duck-curve-chart.jpg)
+
 This repo turns that one-off analysis into something that keeps running: a daily
 GitHub Actions job re-fetches both markets, recomputes the comparison, and commits the
 result - so the dataset grows on its own, with a full history in `data/history.jsonl`
